@@ -1,0 +1,6 @@
+{
+  "required": "Veld is verplicht",
+  "file": "Selecteer bestand",
+  "pattern": "E-mailadres dient een correct formaat te hebben.",
+  "submit": "Verstuur"
+}

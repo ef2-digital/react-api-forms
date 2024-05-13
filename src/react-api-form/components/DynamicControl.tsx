@@ -1,9 +1,15 @@
 import cx from "classnames";
-import { useFormContext, get, FieldError, Controller } from "react-hook-form";
-import { Input, Textarea } from "@nextui-org/input";
+import {
+  useFormContext,
+  get,
+  FieldError,
+  Controller,
+  RegisterOptions,
+} from "react-hook-form";
 import { Radio, RadioGroup } from "@nextui-org/radio";
 import { Checkbox, CheckboxGroup } from "@nextui-org/checkbox";
 import { Select, SelectItem } from "@nextui-org/select";
+import { FileInput, TextareaInput, TextInput } from "./fields";
 import { sprintf } from "../utils/helpers";
 
 import {
@@ -22,12 +28,17 @@ export const DynamicControl = ({
   classNames = {} as FieldClassNames,
   variant,
   radius,
+  color,
+  size,
   placeholder,
   labelPlacement,
   errors,
   messages,
   control,
   setValue,
+  description,
+  renders,
+  icons,
 }: DynamicFieldData) => {
   const { register } = useFormContext();
 
@@ -38,25 +49,36 @@ export const DynamicControl = ({
   );
 
   const error = get(errors, name) as FieldError;
+  //@ts-ignore
   const errorMessage = messages && error && sprintf(messages[error.type], name);
 
+  const rules: RegisterOptions = {
+    required: Boolean(config?.required),
+  };
+
+  if (type === "email") {
+    rules.pattern = {
+      value: /\S+@\S+\.\S+/,
+      message: messages?.email!,
+    };
+  }
+
   const controlProps = {
-    name: name,
-    control: control,
-    rules: {
-      required: Boolean(config?.required),
-    },
+    name,
+    control,
+    rules,
   };
 
   const inputProps = {
     isInvalid: Boolean(error),
-    errorMessage: Boolean(error) && errorMessage,
+    size,
     variant,
     radius,
+    color,
     placeholder,
-    labelPlacement: labelPlacement ?? LabelPlacementEnum.Outside,
     type,
     label,
+    description,
   };
 
   const handleChange = ([selectedValue]: any) => {
@@ -65,59 +87,72 @@ export const DynamicControl = ({
 
   switch (type) {
     case "text":
-      return (
-        <Input
-          aria-label={label}
-          {...inputProps}
-          {...register(name, { required: config?.required })}
-          defaultValue={defaultValue}
-          classNames={{
-            label: `${classNames?.label} ${
-              config?.ui?.hideLabel ? "md:hidden md:mb-0" : ""
-            } `,
-            input: classNames?.text,
-            inputWrapper: classNames?.inputWrapper,
-            errorMessage: classNames?.error,
-          }}
-        />
-      );
-
     case "email":
-      return (
-        <Input
-          aria-label={label}
-          {...inputProps}
-          {...register(name, {
-            required: config?.required,
-          })}
-          defaultValue={defaultValue}
-          classNames={{
-            label: `${classNames?.label} ${
-              config?.ui?.hideLabel ? "md:hidden md:mb-0" : ""
-            } `,
-            input: classNames?.text,
-            inputWrapper: classNames?.inputWrapper,
-            errorMessage: classNames?.error,
-          }}
-        />
-      );
-
     case "number":
       return (
-        <Input
-          aria-label={label}
+        <TextInput
           {...inputProps}
-          {...register(name, { required: config?.required })}
+          labelPlacement={labelPlacement ?? LabelPlacementEnum.Outside}
+          {...controlProps}
+          label={label}
+          placeholder={placeholder}
           defaultValue={defaultValue}
-          classNames={{
-            label: `${classNames?.label} ${
-              config?.ui?.hideLabel ? "md:hidden md:mb-0" : ""
-            } `,
-            input: classNames?.text,
-            inputWrapper: classNames?.inputWrapper,
-            errorMessage: classNames?.error,
-          }}
+          classNames={classNames}
+          register={register}
+          errorMessage={(Boolean(error) && errorMessage) ?? ""}
         />
+      );
+
+    case "textarea":
+      return (
+        <TextareaInput
+          {...inputProps}
+          {...controlProps}
+          label={label}
+          placeholder={placeholder}
+          labelPlacement={labelPlacement ?? LabelPlacementEnum.Outside}
+          defaultValue={defaultValue}
+          classNames={classNames}
+          register={register}
+          errorMessage={(Boolean(error) && errorMessage) ?? ""}
+        />
+      );
+
+    case "checkboxGroup":
+      return (
+        <>
+          <Controller
+            {...controlProps}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <CheckboxGroup
+                classNames={{
+                  label: classNames?.label ?? "text-sm",
+                  wrapper: classNames?.checkboxGroup,
+                }}
+                aria-label={label}
+                {...inputProps}
+                onBlur={onBlur}
+                onChange={onChange}
+                errorMessage={(Boolean(error) && errorMessage) ?? ""}
+              >
+                {options.map((o, index) => (
+                  <Checkbox
+                    key={`${name}-${index}`}
+                    value={o.value}
+                    isSelected={value}
+                    classNames={{
+                      wrapper: classNames?.checkbox,
+                      label: classNames?.checkboxLabel ?? "text-sm",
+                    }}
+                    icon={icons?.CheckboxSvg}
+                  >
+                    {o.label}
+                  </Checkbox>
+                ))}
+              </CheckboxGroup>
+            )}
+          />
+        </>
       );
 
     case "checkbox":
@@ -126,22 +161,22 @@ export const DynamicControl = ({
           <Controller
             {...controlProps}
             render={({ field: { onChange, onBlur, value } }) => (
-              <CheckboxGroup
+              <Checkbox
+                key={`${name}-${value}`}
+                value={value}
+                isSelected={value}
+                classNames={{
+                  label: classNames?.checkboxLabel ?? "text-sm",
+                  wrapper: classNames?.checkbox,
+                }}
                 aria-label={label}
                 {...inputProps}
                 onBlur={onBlur}
                 onChange={onChange}
+                icon={icons?.CheckboxSvg}
               >
-                {options.map((o, index) => (
-                  <Checkbox
-                    key={`${name}-${index}`}
-                    value={o.value}
-                    isSelected={value}
-                  >
-                    {o.label}
-                  </Checkbox>
-                ))}
-              </CheckboxGroup>
+                {label}
+              </Checkbox>
             )}
           />
         </>
@@ -163,24 +198,6 @@ export const DynamicControl = ({
             )}
           />
         </>
-      );
-
-    case "textarea":
-      return (
-        <Textarea
-          aria-label={label}
-          {...inputProps}
-          {...register(name, config)}
-          defaultValue={defaultValue}
-          className={className}
-          classNames={{
-            label: classNames?.label,
-            input: classNames?.text,
-            inputWrapper: classNames?.inputWrapper,
-            base: classNames?.textarea,
-            errorMessage: classNames?.error,
-          }}
-        />
       );
     case "select": {
       return (
@@ -215,12 +232,23 @@ export const DynamicControl = ({
 
     case "file":
       return (
-        <input
-          type="file"
-          {...register(name, config)}
-          defaultValue={defaultValue}
-          className={className}
-        />
+        (renders?.renderFileInput &&
+          renders.renderFileInput({
+            inputProps,
+            classNames,
+            label,
+            controlProps,
+            placeholder,
+            errorMessage,
+          })) ?? (
+          <FileInput
+            {...inputProps}
+            classNames={classNames}
+            label={label}
+            {...controlProps}
+            placeholder={placeholder ?? messages?.file}
+          />
+        )
       );
     default:
       return <></>;

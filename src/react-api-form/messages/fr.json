@@ -1,0 +1,6 @@
+{
+  "required": "Champ requis",
+  "file": "Sélectionner un fichier",
+  "pattern": "L'adresse e-mail doit avoir un format correct.",
+  "submit": "Envoyer"
+}

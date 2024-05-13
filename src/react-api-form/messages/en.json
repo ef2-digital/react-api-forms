@@ -1,0 +1,6 @@
+{
+  "required": "Field is required",
+  "file": "Select file",
+  "pattern": "Email address must have a correct format.",
+  "submit": "Submit"
+}
