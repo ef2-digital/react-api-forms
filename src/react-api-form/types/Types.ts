@@ -124,7 +124,6 @@ export type UiSettingProps = {
 export interface FormProps extends PropsWithChildren {
   formId: string;
   locale?: string;
-  fields: DynamicFieldData[];
   classNames?: FieldClassNames;
   endpoint: string;
   SubmitButton?: ReactNode;

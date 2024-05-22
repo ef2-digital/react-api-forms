@@ -10,6 +10,7 @@ import {
 import { DynamicControl } from "./components/DynamicControl";
 import {
   ColorEnum,
+  DynamicFieldData,
   FormProps,
   LabelPlacementEnum,
   Messages,
@@ -18,13 +19,12 @@ import {
   VariantEnum,
 } from "./types/Types";
 import { useEffect, useState } from "react";
-import postSubmission from "./utils/fetcher";
+import { postSubmission, fetchFields } from "./utils/fetcher";
 import { Button } from "@nextui-org/button";
 import { Spinner } from "@nextui-org/spinner";
 
 const ReactApiForm = ({
   formId,
-  fields,
   locale,
   classNames,
   endpoint,
@@ -36,8 +36,18 @@ const ReactApiForm = ({
   const [isSuccess, setSuccess] = useState<string>("");
   const [isError, setError] = useState<string>("");
   const [messages, setMessages] = useState<Messages>({});
+  const [fields, setFields] = useState<DynamicFieldData[] | null>(null);
 
   useEffect(() => {
+    const fetchForm = async () => {
+      const response = await fetchFields(endpoint, formId);
+
+      if (!fields) {
+        setFields(null);
+      }
+
+      setFields(JSON.parse(response));
+    };
     const fetchMessages = async () => {
       const response = await import(`./messages/${locale ?? "nl"}.json`);
 
@@ -45,6 +55,7 @@ const ReactApiForm = ({
     };
 
     fetchMessages().catch(console.error);
+    fetchForm().catch(console.error);
   }, []);
 
   const formMethods = useForm();
@@ -102,6 +113,11 @@ const ReactApiForm = ({
     ),
   };
 
+  if (!fields) {
+    return <></>;
+  }
+
+  const formFields: DynamicFieldData[] = fields;
   return (
     <>
       <FormProvider {...formMethods}>

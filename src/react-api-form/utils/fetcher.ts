@@ -26,4 +26,14 @@ const postSubmission = async (
   return response;
 };
 
-export default postSubmission;
+const fetchFields = async (endpoint: string, formId: string) => {
+  const response = await fetch(`${endpoint}/api/api-forms/fields/${formId}`, {
+    method: "GET",
+  });
+
+  const data = await response.json();
+
+  return data.data.fields;
+};
+
+export { postSubmission, fetchFields };
