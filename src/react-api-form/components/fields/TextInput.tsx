@@ -28,7 +28,6 @@ const TextInput = ({
     <Input
       {...register(name!, rules)}
       type={type}
-      aria-label={label}
       isInvalid={isInvalid}
       errorMessage={errorMessage}
       variant={variant}
@@ -38,15 +37,7 @@ const TextInput = ({
       labelPlacement={labelPlacement}
       label={label}
       defaultValue={defaultValue}
-      classNames={{
-        label: `${classNames?.label} ${
-          (hideLabel && "md:hidden md:mb-0") ?? ""
-        } `,
-        input: classNames?.text,
-        mainWrapper: "flex grow",
-        inputWrapper: `${classNames?.inputWrapper} data-[hover=true]:border-${color}`,
-        errorMessage: classNames?.error,
-      }}
+      classNames={classNames?.uiClassNames?.input}
     />
   );
 };

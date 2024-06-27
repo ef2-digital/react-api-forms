@@ -84,11 +84,21 @@ const ReactApiForm = ({
   };
 
   if (isError) {
-    return <div className={classNames?.errorWrapper}>{isError}</div>;
+    return (
+      <div
+        className={classNames?.errorWrapper}
+        dangerouslySetInnerHTML={{ __html: isError }}
+      />
+    );
   }
 
   if (isSuccess) {
-    return <div className={classNames?.successWrapper}>{isSuccess}</div>;
+    return (
+      <div
+        className={classNames?.successWrapper}
+        dangerouslySetInnerHTML={{ __html: isSuccess }}
+      />
+    );
   }
 
   const { variant, radius, labelPlacement, color, size } = nextUi || {

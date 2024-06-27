@@ -29,23 +29,63 @@ export interface FieldClassNames {
   fieldsWrapper?: string;
   fieldWrapper?: string;
   inputWrapper?: string;
-  label?: string;
-  error?: string;
-  text?: string;
-  email?: string;
-  number?: string;
-  select?: string;
-  checkbox?: string;
-  checkboxGroup?: string;
-  checkboxLabel?: string;
   file?: string;
-  radio?: string;
-  radioWrapper?: string;
-  radioLabel?: string;
-  button?: string;
-  textarea?: string;
-  selectorIcon?: string;
   fileWrapper?: string;
+  button?: string;
+  label?: string;
+  uiClassNames?: {
+    textarea: Record<
+      | "base"
+      | "label"
+      | "inputWrapper"
+      | "innerWrapper"
+      | "input"
+      | "description"
+      | "errorMessage",
+      string
+    >;
+    itemClasses: Record<
+      "base" | "wrapper" | "title" | "description" | "selectedIcon",
+      string
+    >;
+    listBox: Record<"base" | "list" | "emptyContent", string>;
+    input: Record<
+      | "base"
+      | "label"
+      | "inputWrapper"
+      | "innerWrapper"
+      | "mainWrapper"
+      | "input"
+      | "clearButton"
+      | "helperWrapper"
+      | "description"
+      | "errorMessage",
+      string
+    >;
+    checkbox: Record<"base" | "wrapper" | "icon" | "label", string>;
+    radio: Record<
+      "base" | "wrapper" | "labelWrapper" | "label" | "control",
+      "description" | string
+    >;
+    radioGroup: Record<"base" | "wrapper" | "label", string>;
+    checkboxGroup?: Record<"base" | "wrapper" | "label", string>;
+    select: Record<
+      | "base"
+      | "label"
+      | "trigger"
+      | "mainWrapper"
+      | "innerWrapper"
+      | "selectorIcon"
+      | "value"
+      | "listboxWrapper"
+      | "listbox"
+      | "popoverContent"
+      | "helperWrapper"
+      | "description"
+      | "errorMessage",
+      string
+    >;
+  };
 }
 
 export interface DynamicFieldData {
@@ -76,7 +116,7 @@ export interface TranslatorProps {
   params?: { [key: string]: string | number } | undefined;
 }
 
-export const enum ColorEnum {
+export enum ColorEnum {
   Default = "default",
   Primary = "primary",
   Secondary = "secondary",
@@ -85,14 +125,14 @@ export const enum ColorEnum {
   Danger = "danger",
 }
 
-export const enum VariantEnum {
+export enum VariantEnum {
   Flat = "flat",
   Bordered = "bordered",
   Underlined = "underlined",
   Faded = "faded",
 }
 
-export const enum RadiusEnum {
+export enum RadiusEnum {
   Full = "full",
   Large = "lg",
   Medium = "md",
@@ -100,13 +140,13 @@ export const enum RadiusEnum {
   None = "none",
 }
 
-export const enum SizeEnum {
+export enum SizeEnum {
   Large = "lg",
   Medium = "md",
   Small = "sm",
 }
 
-export const enum LabelPlacementEnum {
+export enum LabelPlacementEnum {
   Inside = "inside",
   Outside = "outside",
   OutsideLeft = "outside-left",
@@ -184,6 +224,27 @@ export declare interface Renders {
   }: {
     handleSubmit: SubmitHandler<FieldValues>;
     isSubmitting: boolean;
+  }) => ReactNode;
+  renderSelect?: ({
+    inputProps,
+    classNames,
+    label,
+    controlProps,
+    placeholder,
+    errorMessage,
+    options,
+  }: {
+    inputProps: InputProps;
+    classNames: FieldClassNames;
+    label: string;
+    controlProps?: {
+      name?: string;
+      control?: Control<any>;
+      rules?: RegisterOptions;
+    };
+    placeholder?: string;
+    errorMessage?: string;
+    options: SelectOption[];
   }) => ReactNode;
   renderFileInput?: ({
     inputProps,

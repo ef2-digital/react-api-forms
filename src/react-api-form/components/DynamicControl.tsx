@@ -42,11 +42,7 @@ export const DynamicControl = ({
 }: DynamicFieldData) => {
   const { register } = useFormContext();
 
-  const className = cx(
-    classNames[type] ?? "",
-    config?.ui?.classNames,
-    "w-full"
-  );
+  const className = cx(config?.ui?.classNames, "w-full");
 
   const error = get(errors, name) as FieldError;
   //@ts-ignore
@@ -79,6 +75,7 @@ export const DynamicControl = ({
     type,
     label,
     description,
+    name,
   };
 
   const handleChange = ([selectedValue]: any) => {
@@ -125,10 +122,7 @@ export const DynamicControl = ({
             {...controlProps}
             render={({ field: { onChange, onBlur, value } }) => (
               <CheckboxGroup
-                classNames={{
-                  label: classNames?.label ?? "text-sm",
-                  wrapper: classNames?.checkboxGroup,
-                }}
+                classNames={classNames.uiClassNames?.checkboxGroup}
                 aria-label={label}
                 {...inputProps}
                 onBlur={onBlur}
@@ -140,10 +134,7 @@ export const DynamicControl = ({
                     key={`${name}-${index}`}
                     value={o.value}
                     isSelected={value}
-                    classNames={{
-                      wrapper: classNames?.checkbox,
-                      label: classNames?.checkboxLabel ?? "text-sm",
-                    }}
+                    classNames={classNames.uiClassNames?.checkbox}
                     icon={icons?.CheckboxSvg}
                   >
                     {o.label}
@@ -165,10 +156,7 @@ export const DynamicControl = ({
                 key={`${name}-${value}`}
                 value={value}
                 isSelected={value}
-                classNames={{
-                  label: classNames?.checkboxLabel ?? "text-sm",
-                  wrapper: classNames?.checkbox,
-                }}
+                classNames={classNames.uiClassNames?.checkbox}
                 aria-label={label}
                 {...inputProps}
                 onBlur={onBlur}
@@ -188,9 +176,18 @@ export const DynamicControl = ({
           <Controller
             {...controlProps}
             render={({ field: { onChange, onBlur, value } }) => (
-              <RadioGroup {...inputProps} onBlur={onBlur} onChange={onChange}>
+              <RadioGroup
+                {...inputProps}
+                onBlur={onBlur}
+                onChange={onChange}
+                classNames={classNames.uiClassNames?.radioGroup}
+              >
                 {options.map((o, index) => (
-                  <Radio key={`${name}-${index}`} value={o.label}>
+                  <Radio
+                    key={`${name}-${index}`}
+                    value={o.label}
+                    classNames={classNames.uiClassNames?.radio}
+                  >
                     {o.label}
                   </Radio>
                 ))}
@@ -201,32 +198,42 @@ export const DynamicControl = ({
       );
     case "select": {
       return (
-        <Controller
-          {...controlProps}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Select
-              aria-label={label}
-              selectedKeys={value ? [value] : []}
-              {...register(name, config)}
-              {...inputProps}
-              id={name}
-              className={className}
-              onBlur={onBlur}
-              onSelectionChange={handleChange}
-              onChange={onChange}
-              classNames={{
-                selectorIcon: classNames?.selectorIcon,
-                trigger: `${Boolean(error) ? "border-danger" : ""} ${
-                  classNames?.inputWrapper
-                }`,
-              }}
-            >
-              {options.map((o) => (
-                <SelectItem key={o.label}>{o.label}</SelectItem>
-              ))}
-            </Select>
-          )}
-        />
+        (renders?.renderSelect &&
+          renders.renderSelect({
+            inputProps,
+            classNames,
+            label,
+            controlProps,
+            placeholder,
+            errorMessage,
+            options,
+          })) ?? (
+          <Controller
+            {...controlProps}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Select
+                aria-label={label}
+                selectedKeys={value ? [value] : []}
+                {...register(name, config)}
+                {...inputProps}
+                className={className}
+                onBlur={onBlur}
+                onSelectionChange={handleChange}
+                onChange={onChange}
+                classNames={classNames.uiClassNames?.select}
+              >
+                {options.map((o) => (
+                  <SelectItem
+                    classNames={classNames.uiClassNames?.listBox}
+                    key={o.label}
+                  >
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </Select>
+            )}
+          />
+        )
       );
     }
 

@@ -38,13 +38,7 @@ const TextareaInput = ({
         label={label}
         defaultValue={defaultValue}
         description={description}
-        classNames={{
-          label: classNames?.label,
-          input: classNames?.text,
-          inputWrapper: classNames?.inputWrapper,
-          base: classNames?.textarea,
-          errorMessage: classNames?.error,
-        }}
+        classNames={classNames?.uiClassNames?.textarea}
       />
     </>
   );

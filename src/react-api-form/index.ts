@@ -1,4 +1,7 @@
 import ReactApiForm from "./ReactApiForm";
+import { DynamicControl } from "./components/DynamicControl";
+import { postSubmission, fetchFields } from "./utils/fetcher";
+
 import {
   FormProps,
   LabelPlacementEnum,
@@ -14,4 +17,4 @@ export type {
   RadiusEnum,
   ColorEnum,
 };
-export { ReactApiForm };
+export { ReactApiForm, DynamicControl, postSubmission, fetchFields };
