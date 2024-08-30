@@ -34,57 +34,74 @@ export interface FieldClassNames {
   button?: string;
   label?: string;
   uiClassNames?: {
-    textarea: Record<
-      | "base"
-      | "label"
-      | "inputWrapper"
-      | "innerWrapper"
-      | "input"
-      | "description"
-      | "errorMessage",
-      string
-    >;
-    itemClasses: Record<
-      "base" | "wrapper" | "title" | "description" | "selectedIcon",
-      string
-    >;
-    listBox: Record<"base" | "list" | "emptyContent", string>;
-    input: Record<
-      | "base"
-      | "label"
-      | "inputWrapper"
-      | "innerWrapper"
-      | "mainWrapper"
-      | "input"
-      | "clearButton"
-      | "helperWrapper"
-      | "description"
-      | "errorMessage",
-      string
-    >;
-    checkbox: Record<"base" | "wrapper" | "icon" | "label", string>;
-    radio: Record<
-      "base" | "wrapper" | "labelWrapper" | "label" | "control",
-      "description" | string
-    >;
-    radioGroup: Record<"base" | "wrapper" | "label", string>;
-    checkboxGroup?: Record<"base" | "wrapper" | "label", string>;
-    select: Record<
-      | "base"
-      | "label"
-      | "trigger"
-      | "mainWrapper"
-      | "innerWrapper"
-      | "selectorIcon"
-      | "value"
-      | "listboxWrapper"
-      | "listbox"
-      | "popoverContent"
-      | "helperWrapper"
-      | "description"
-      | "errorMessage",
-      string
-    >;
+    textarea?: {
+      [K in
+        | "base"
+        | "label"
+        | "inputWrapper"
+        | "innerWrapper"
+        | "input"
+        | "description"
+        | "errorMessage"]?: string;
+    };
+    itemClasses?: {
+      [K in
+        | "base"
+        | "wrapper"
+        | "title"
+        | "description"
+        | "selectedIcon"]?: string;
+    };
+    listBox?: {
+      [K in "base" | "list" | "emptyContent"]?: string;
+    };
+    input?: {
+      [K in
+        | "base"
+        | "label"
+        | "inputWrapper"
+        | "innerWrapper"
+        | "mainWrapper"
+        | "input"
+        | "clearButton"
+        | "helperWrapper"
+        | "description"
+        | "errorMessage"]?: string;
+    };
+    checkbox?: {
+      [K in "base" | "wrapper" | "icon" | "label"]?: string;
+    };
+    radio?: {
+      [K in
+        | "base"
+        | "wrapper"
+        | "labelWrapper"
+        | "label"
+        | "control"
+        | "description"]?: string;
+    };
+    radioGroup?: {
+      [K in "base" | "wrapper" | "label"]?: string;
+    };
+    checkboxGroup?: {
+      [K in "base" | "wrapper" | "label"]?: string;
+    };
+    select?: {
+      [K in
+        | "base"
+        | "label"
+        | "trigger"
+        | "mainWrapper"
+        | "innerWrapper"
+        | "selectorIcon"
+        | "value"
+        | "listboxWrapper"
+        | "listbox"
+        | "popoverContent"
+        | "helperWrapper"
+        | "description"
+        | "errorMessage"]?: string;
+    };
   };
 }
 
@@ -170,6 +187,8 @@ export interface FormProps extends PropsWithChildren {
   nextUi?: UiSettingProps;
   renders?: Renders;
   icons?: Icons;
+  givenFields?: string;
+  givenMessages?: Messages;
 }
 
 export interface InputProps {

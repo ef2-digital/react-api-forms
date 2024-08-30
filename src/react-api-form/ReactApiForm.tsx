@@ -32,11 +32,15 @@ const ReactApiForm = ({
   nextUi,
   renders,
   icons,
+  givenFields,
+  givenMessages,
 }: FormProps) => {
   const [isSuccess, setSuccess] = useState<string>("");
   const [isError, setError] = useState<string>("");
-  const [messages, setMessages] = useState<Messages>({});
-  const [fields, setFields] = useState<DynamicFieldData[] | null>(null);
+  const [messages, setMessages] = useState<Messages>(givenMessages ?? {});
+  const [fields, setFields] = useState<DynamicFieldData[] | null>(
+    givenFields && JSON.parse(givenFields)
+  );
 
   useEffect(() => {
     const fetchForm = async () => {
@@ -54,8 +58,13 @@ const ReactApiForm = ({
       setMessages(response.default);
     };
 
-    fetchMessages().catch(console.error);
-    fetchForm().catch(console.error);
+    if (!givenMessages) {
+      fetchMessages().catch(console.error);
+    }
+
+    if (!givenFields) {
+      fetchForm().catch(console.error);
+    }
   }, []);
 
   const formMethods = useForm();
@@ -123,59 +132,55 @@ const ReactApiForm = ({
     ),
   };
 
-  if (!fields) {
-    return <></>;
-  }
-
-  const formFields: DynamicFieldData[] = fields;
   return (
     <>
       <FormProvider {...formMethods}>
         <div
           className={cx(classNames?.fieldsWrapper, "flex flex-wrap gap-4 my-4")}
         >
-          {fields.map((field, index) => {
-            const { ui } = field.config || {};
-            const width = ui?.width;
+          {fields &&
+            fields.map((field, index) => {
+              const { ui } = field.config || {};
+              const width = ui?.width;
 
-            const widthClassMap: { [key: string]: string } = {
-              "100%": "w-full mr-4",
-              "75%": "w-full md:w-[calc(75%-1rem)]",
-              "50%": "w-full md:w-[calc(50%-1rem)]",
-              "33%": "w-full md:w-[calc(33.33%-1rem)]",
-              "25%": "w-full md:w-[calc(25%-1rem)]",
-            };
+              const widthClassMap: { [key: string]: string } = {
+                "100%": "w-full md:mr-4",
+                "75%": "w-full md:w-[calc(75%-1rem)]",
+                "50%": "w-full md:w-[calc(50%-1rem)]",
+                "33%": "w-full md:w-[calc(33.33%-1rem)]",
+                "25%": "w-full md:w-[calc(25%-1rem)]",
+              };
 
-            const widthClass = widthClassMap[width];
+              const widthClass = widthClassMap[width];
 
-            return (
-              <div
-                key={`${field.name}-wrapper-${index}`}
-                className={cx(
-                  "flex-item",
-                  ui?.classNames,
-                  classNames?.fieldWrapper,
-                  widthClass
-                )}
-              >
-                <DynamicControl
-                  variant={variant}
-                  radius={radius}
-                  size={size}
-                  labelPlacement={labelPlacement}
-                  color={color}
-                  {...field}
-                  classNames={classNames}
-                  errors={errors}
-                  messages={messages}
-                  control={control}
-                  setValue={setValue}
-                  renders={renders}
-                  icons={icons}
-                />
-              </div>
-            );
-          })}
+              return (
+                <div
+                  key={`${field.name}-wrapper-${index}`}
+                  className={cx(
+                    "flex-item",
+                    ui?.classNames,
+                    classNames?.fieldWrapper,
+                    widthClass
+                  )}
+                >
+                  <DynamicControl
+                    variant={variant}
+                    radius={radius}
+                    size={size}
+                    labelPlacement={labelPlacement}
+                    color={color}
+                    {...field}
+                    classNames={classNames}
+                    errors={errors}
+                    messages={messages}
+                    control={control}
+                    setValue={setValue}
+                    renders={renders}
+                    icons={icons}
+                  />
+                </div>
+              );
+            })}
         </div>
         <div className="hidden">
           <DynamicControl
@@ -184,6 +189,7 @@ const ReactApiForm = ({
             label="Don’t fill this out if you're human"
             type="text"
             control={control}
+            messages={messages}
             classNames={classNames}
           />
         </div>
