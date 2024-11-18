@@ -1,7 +1,6 @@
 import { FieldValues, UseFormRegister } from "react-hook-form";
 import { InputProps } from "../../types/Types";
-import { Input } from "@nextui-org/input";
-import { Textarea } from "@nextui-org/react";
+import { Textarea } from "@nextui-org/input";
 
 interface TextareaInputProps extends InputProps {
   register: UseFormRegister<FieldValues>;

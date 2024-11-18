@@ -135,88 +135,97 @@ const ReactApiForm = ({
   return (
     <>
       <FormProvider {...formMethods}>
-        <div
-          className={cx(classNames?.fieldsWrapper, "flex flex-wrap gap-4 my-4")}
-        >
-          {fields &&
-            fields.map((field, index) => {
-              const { ui } = field.config || {};
-              const width = ui?.width;
-
-              const widthClassMap: { [key: string]: string } = {
-                "100%": "w-full md:mr-4",
-                "75%": "w-full md:w-[calc(75%-1rem)]",
-                "50%": "w-full md:w-[calc(50%-1rem)]",
-                "33%": "w-full md:w-[calc(33.33%-1rem)]",
-                "25%": "w-full md:w-[calc(25%-1rem)]",
-              };
-
-              const widthClass = widthClassMap[width];
-
-              return (
-                <div
-                  key={`${field.name}-wrapper-${index}`}
-                  className={cx(
-                    "flex-item",
-                    ui?.classNames,
-                    classNames?.fieldWrapper,
-                    widthClass
-                  )}
-                >
-                  <DynamicControl
-                    variant={variant}
-                    radius={radius}
-                    size={size}
-                    labelPlacement={labelPlacement}
-                    color={color}
-                    {...field}
-                    classNames={classNames}
-                    errors={errors}
-                    messages={messages}
-                    control={control}
-                    setValue={setValue}
-                    renders={renders}
-                    icons={icons}
-                  />
-                </div>
-              );
-            })}
-        </div>
-        <div className="hidden">
-          <DynamicControl
-            defaultValue=""
-            name="honeypot"
-            label="Don’t fill this out if you're human"
-            type="text"
-            control={control}
-            messages={messages}
-            classNames={classNames}
-          />
-        </div>
-
-        {(renders?.renderSubmitButton &&
-          renders.renderSubmitButton({
-            //@ts-ignore
-            handleSubmit: handleSubmit(formSubmit),
-            isSubmitting: isSubmitting,
-          })) ?? (
-          <Button
-            as="button"
-            type="submit"
-            onClick={handleSubmit(formSubmit)}
-            disabled={isSubmitting}
-            color={color}
-            radius={radius}
-            className={classNames?.button}
-            endContent={
-              <span className="group-hover:translate-x- inline-flex h-8 w-8 flex-none items-center justify-center rounded-full transition-[colors,transform] duration-200 group-data-[hover=true]:translate-x-1 bg-primary-500 group-data-[hover=true]:bg-primary-400 mr-2">
-                {isSubmitting ? <Spinner size="sm" color="white" /> : SubmitSvg}
-              </span>
-            }
+        <form>
+          <div
+            className={cx(
+              classNames?.fieldsWrapper,
+              "flex flex-wrap gap-4 my-4"
+            )}
           >
-            {messages?.submit}
-          </Button>
-        )}
+            {fields &&
+              fields.map((field, index) => {
+                const { ui } = field.config || {};
+                const width = ui?.width;
+
+                const widthClassMap: { [key: string]: string } = {
+                  "100%": "w-full md:mr-4",
+                  "75%": "w-full md:w-[calc(75%-1rem)]",
+                  "50%": "w-full md:w-[calc(50%-1rem)]",
+                  "33%": "w-full md:w-[calc(33.33%-1rem)]",
+                  "25%": "w-full md:w-[calc(25%-1rem)]",
+                };
+
+                const widthClass = widthClassMap[width];
+
+                return (
+                  <div
+                    key={`${field.name}-wrapper-${index}`}
+                    className={cx(
+                      "flex-item",
+                      ui?.classNames,
+                      classNames?.fieldWrapper,
+                      widthClass
+                    )}
+                  >
+                    <DynamicControl
+                      variant={variant}
+                      radius={radius}
+                      size={size}
+                      labelPlacement={labelPlacement}
+                      color={color}
+                      {...field}
+                      classNames={classNames}
+                      errors={errors}
+                      messages={messages}
+                      control={control}
+                      setValue={setValue}
+                      renders={renders}
+                      icons={icons}
+                    />
+                  </div>
+                );
+              })}
+          </div>
+          <div className="hidden">
+            <DynamicControl
+              defaultValue=""
+              name="honeypot"
+              label="Don’t fill this out if you're human"
+              type="text"
+              control={control}
+              messages={messages}
+              classNames={classNames}
+            />
+          </div>
+
+          {(renders?.renderSubmitButton &&
+            renders.renderSubmitButton({
+              //@ts-ignore
+              handleSubmit: handleSubmit(formSubmit),
+              isSubmitting: isSubmitting,
+            })) ?? (
+            <Button
+              as="button"
+              type="submit"
+              onClick={handleSubmit(formSubmit)}
+              disabled={isSubmitting}
+              color={color}
+              radius={radius}
+              className={classNames?.button}
+              endContent={
+                <span className="group-hover:translate-x- inline-flex h-8 w-8 flex-none items-center justify-center rounded-full transition-[colors,transform] duration-200 group-data-[hover=true]:translate-x-1 bg-primary-500 group-data-[hover=true]:bg-primary-400 mr-2">
+                  {isSubmitting ? (
+                    <Spinner size="sm" color="white" />
+                  ) : (
+                    SubmitSvg
+                  )}
+                </span>
+              }
+            >
+              {messages?.submit}
+            </Button>
+          )}
+        </form>
       </FormProvider>
       {children}
     </>
