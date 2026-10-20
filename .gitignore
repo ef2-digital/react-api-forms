@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local agent settings
+CLAUDE.local.md
+AGENTS.local.md
+.claude/settings.local.json
+.claude/worktrees/
