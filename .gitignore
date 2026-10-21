@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local agent settings
+CLAUDE.local.md
+AGENTS.local.md
+.claude/settings.local.json
+.claude/worktrees/
+
+# Yarn 1 is the package manager: yarn.lock is the only lockfile.
+package-lock.json

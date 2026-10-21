@@ -1,22 +1,46 @@
 import cx from "classnames";
 import {
-  useFormContext,
-  get,
-  FieldError,
   Controller,
+  FieldError as FormFieldError,
   RegisterOptions,
+  get,
 } from "react-hook-form";
-import { Radio, RadioGroup } from "@nextui-org/radio";
-import { Checkbox, CheckboxGroup } from "@nextui-org/checkbox";
-import { Select, SelectItem } from "@nextui-org/select";
+import {
+  Checkbox,
+  CheckboxGroup,
+  FieldError,
+  Label,
+  ListBox,
+  Radio,
+  RadioGroup,
+  Select,
+} from "@heroui/react";
 import { FileInput, TextareaInput, TextInput } from "./fields";
 import { sprintf } from "../utils/helpers";
+import { DynamicFieldData, FieldClassNames, InputProps } from "../types/Types";
 
-import {
-  DynamicFieldData,
-  FieldClassNames,
-  LabelPlacementEnum,
-} from "../types/Types";
+const CheckboxOption = ({
+  value,
+  label,
+  classNames,
+  icon,
+  inputRef,
+}: {
+  value?: string;
+  label: string;
+  classNames: FieldClassNames;
+  icon?: React.ReactNode;
+  inputRef?: React.Ref<HTMLInputElement>;
+}) => (
+  <Checkbox value={value} className={classNames.option} inputRef={inputRef}>
+    <Checkbox.Content>
+      <Checkbox.Control className={classNames.control}>
+        <Checkbox.Indicator>{icon}</Checkbox.Indicator>
+      </Checkbox.Control>
+      <Label className={classNames.optionLabel}>{label}</Label>
+    </Checkbox.Content>
+  </Checkbox>
+);
 
 export const DynamicControl = ({
   type,
@@ -26,27 +50,17 @@ export const DynamicControl = ({
   options = [],
   config,
   classNames = {} as FieldClassNames,
-  variant,
-  radius,
-  color,
-  size,
   placeholder,
-  labelPlacement,
   errors,
   messages,
   control,
-  setValue,
   description,
   renders,
   icons,
 }: DynamicFieldData) => {
-  const { register } = useFormContext();
-
-  const className = cx(config?.ui?.classNames, "w-full");
-
-  const error = get(errors, name) as FieldError;
-  //@ts-ignore
-  const errorMessage = messages && error && sprintf(messages[error.type], name);
+  const error = get(errors, name) as FormFieldError | undefined;
+  const errorMessage =
+    (messages && error && sprintf(messages[error.type as keyof typeof messages] ?? "", name)) || "";
 
   const rules: RegisterOptions = {
     required: Boolean(config?.required),
@@ -55,148 +69,140 @@ export const DynamicControl = ({
   if (type === "email") {
     rules.pattern = {
       value: /\S+@\S+\.\S+/,
-      message: messages?.email!,
+      message: messages?.email ?? "",
     };
   }
 
-  const controlProps = {
-    name,
-    control,
-    rules,
-  };
+  const controlProps = { name, control, rules };
+  const isRequired = Boolean(rules.required);
 
-  const inputProps = {
+  const inputProps: InputProps = {
     isInvalid: Boolean(error),
-    size,
-    variant,
-    radius,
-    color,
     placeholder,
     type,
     label,
     description,
     name,
+    control,
+    rules,
+    classNames,
+    defaultValue,
+    errorMessage,
   };
 
-  const handleChange = ([selectedValue]: any) => {
-    setValue(name, selectedValue);
-  };
+  const fieldClassName = cx("w-full", config?.ui?.classNames, classNames.field);
+  const errorElement = <FieldError className={classNames.error}>{errorMessage}</FieldError>;
 
   switch (type) {
     case "text":
     case "email":
     case "number":
-      return (
-        <TextInput
-          {...inputProps}
-          labelPlacement={labelPlacement ?? LabelPlacementEnum.Outside}
-          {...controlProps}
-          label={label}
-          placeholder={placeholder}
-          defaultValue={defaultValue}
-          classNames={classNames}
-          register={register}
-          errorMessage={(Boolean(error) && errorMessage) ?? ""}
-        />
-      );
+      return <TextInput {...inputProps} />;
 
     case "textarea":
-      return (
-        <TextareaInput
-          {...inputProps}
-          {...controlProps}
-          label={label}
-          placeholder={placeholder}
-          labelPlacement={labelPlacement ?? LabelPlacementEnum.Outside}
-          defaultValue={defaultValue}
-          classNames={classNames}
-          register={register}
-          errorMessage={(Boolean(error) && errorMessage) ?? ""}
-        />
-      );
+      return <TextareaInput {...inputProps} />;
 
     case "checkboxGroup":
       return (
-        <>
-          <Controller
-            {...controlProps}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <CheckboxGroup
-                classNames={classNames.uiClassNames?.checkboxGroup}
-                aria-label={label}
-                {...inputProps}
-                onBlur={onBlur}
-                onChange={onChange}
-                errorMessage={(Boolean(error) && errorMessage) ?? ""}
-              >
-                {options.map((o, index) => (
-                  <Checkbox
-                    key={`${name}-${index}`}
-                    value={o.value}
-                    isSelected={value}
-                    classNames={classNames.uiClassNames?.checkbox}
-                    icon={icons?.CheckboxSvg}
-                  >
-                    {o.label}
-                  </Checkbox>
-                ))}
-              </CheckboxGroup>
-            )}
-          />
-        </>
+        <Controller
+          {...controlProps}
+          defaultValue={defaultValue}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <CheckboxGroup
+              name={name}
+              value={value ?? []}
+              onChange={onChange}
+              onBlur={onBlur}
+              isRequired={isRequired}
+              isInvalid={Boolean(error)}
+              validationBehavior="aria"
+              className={fieldClassName}
+            >
+              <Label className={classNames.label}>{label}</Label>
+              {options.map((o, index) => (
+                <CheckboxOption
+                  key={`${name}-${index}`}
+                  value={o.value}
+                  label={o.label}
+                  classNames={classNames}
+                  icon={icons?.CheckboxSvg}
+                  inputRef={index === 0 ? ref : undefined}
+                />
+              ))}
+              {errorElement}
+            </CheckboxGroup>
+          )}
+        />
       );
 
     case "checkbox":
       return (
-        <>
-          <Controller
-            {...controlProps}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Checkbox
-                key={`${name}-${value}`}
-                value={value}
-                isSelected={value}
-                classNames={classNames.uiClassNames?.checkbox}
-                aria-label={label}
-                {...inputProps}
-                onBlur={onBlur}
-                onChange={onChange}
-                icon={icons?.CheckboxSvg}
-              >
-                {label}
-              </Checkbox>
-            )}
-          />
-        </>
+        <Controller
+          {...controlProps}
+          defaultValue={defaultValue}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Checkbox
+              name={name}
+              isSelected={Boolean(value)}
+              onChange={onChange}
+              onBlur={onBlur}
+              inputRef={ref}
+              isRequired={isRequired}
+              isInvalid={Boolean(error)}
+              validationBehavior="aria"
+              className={cx(fieldClassName, classNames.option)}
+            >
+              <Checkbox.Content>
+                <Checkbox.Control className={classNames.control}>
+                  <Checkbox.Indicator>{icons?.CheckboxSvg}</Checkbox.Indicator>
+                </Checkbox.Control>
+                <Label className={classNames.optionLabel}>{label}</Label>
+              </Checkbox.Content>
+              {errorElement}
+            </Checkbox>
+          )}
+        />
       );
 
     case "radio":
       return (
-        <>
-          <Controller
-            {...controlProps}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <RadioGroup
-                {...inputProps}
-                onBlur={onBlur}
-                onChange={onChange}
-                classNames={classNames.uiClassNames?.radioGroup}
-              >
-                {options.map((o, index) => (
-                  <Radio
-                    key={`${name}-${index}`}
-                    value={o.label}
-                    classNames={classNames.uiClassNames?.radio}
-                  >
-                    {o.label}
-                  </Radio>
-                ))}
-              </RadioGroup>
-            )}
-          />
-        </>
+        <Controller
+          {...controlProps}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <RadioGroup
+              name={name}
+              value={value ?? null}
+              onChange={onChange}
+              onBlur={onBlur}
+              isRequired={isRequired}
+              isInvalid={Boolean(error)}
+              validationBehavior="aria"
+              className={fieldClassName}
+            >
+              <Label className={classNames.label}>{label}</Label>
+              {options.map((o, index) => (
+                // The label is the submitted value, as in earlier versions of this package.
+                <Radio
+                  key={`${name}-${index}`}
+                  value={o.label}
+                  className={classNames.option}
+                  inputRef={index === 0 ? ref : undefined}
+                >
+                  <Radio.Content>
+                    <Radio.Control className={classNames.control}>
+                      <Radio.Indicator />
+                    </Radio.Control>
+                    <Label className={classNames.optionLabel}>{o.label}</Label>
+                  </Radio.Content>
+                </Radio>
+              ))}
+              {errorElement}
+            </RadioGroup>
+          )}
+        />
       );
-    case "select": {
+
+    case "select":
       return (
         (renders?.renderSelect &&
           renders.renderSelect({
@@ -210,32 +216,40 @@ export const DynamicControl = ({
           })) ?? (
           <Controller
             {...controlProps}
-            render={({ field: { onChange, onBlur, value } }) => (
+            render={({ field: { onChange, onBlur, value, ref } }) => (
               <Select
-                aria-label={label}
-                selectedKeys={value ? [value] : []}
-                {...register(name, config)}
-                {...inputProps}
-                className={className}
+                name={name}
+                placeholder={placeholder}
+                value={value ?? null}
+                onChange={(key) => onChange(key)}
                 onBlur={onBlur}
-                onSelectionChange={handleChange}
-                onChange={onChange}
-                classNames={classNames.uiClassNames?.select}
+                isRequired={isRequired}
+                isInvalid={Boolean(error)}
+                validationBehavior="aria"
+                className={fieldClassName}
               >
-                {options.map((o) => (
-                  <SelectItem
-                    classNames={classNames.uiClassNames?.listBox}
-                    key={o.label}
-                  >
-                    {o.label}
-                  </SelectItem>
-                ))}
+                <Label className={classNames.label}>{label}</Label>
+                <Select.Trigger ref={ref} className={classNames.input}>
+                  <Select.Value />
+                  <Select.Indicator />
+                </Select.Trigger>
+                <Select.Popover className={classNames.popover}>
+                  <ListBox>
+                    {options.map((o) => (
+                      // The label is the submitted value, as in earlier versions of this package.
+                      <ListBox.Item key={o.label} id={o.label} textValue={o.label} className={classNames.option}>
+                        {o.label}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+                {errorElement}
               </Select>
             )}
           />
         )
       );
-    }
 
     case "file":
       return (
@@ -247,16 +261,9 @@ export const DynamicControl = ({
             controlProps,
             placeholder,
             errorMessage,
-          })) ?? (
-          <FileInput
-            {...inputProps}
-            classNames={classNames}
-            label={label}
-            {...controlProps}
-            placeholder={placeholder ?? messages?.file}
-          />
-        )
+          })) ?? <FileInput {...inputProps} placeholder={placeholder ?? messages?.file} />
       );
+
     default:
       return <></>;
   }
