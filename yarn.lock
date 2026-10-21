@@ -107,18 +107,13 @@
     input-otp "1.5.0"
     tailwind-variants "3.3.1"
 
-"@heroui/styles@3.2.6":
+"@heroui/styles@3.2.6", "@heroui/styles@^3.2.6":
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/@heroui/styles/-/styles-3.2.6.tgz#972af578d8b8c8c59cd00038da99a5ec187c645a"
   integrity sha512-feKZUphVe5+QCXnUe8kpqT5T+pPeMI3LaQcSztx08PGVTkhz0dU0C6crKvA1G4HHIPFXXon68VeL8lPjvGHsWg==
   dependencies:
     tailwind-variants "3.3.1"
     tw-animate-css "1.4.0"
-
-"@hookform/error-message@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/@hookform/error-message/-/error-message-2.0.1.tgz"
-  integrity sha512-U410sAr92xgxT1idlu9WWOVjndxLdgPUHEB8Schr27C9eh7/xUnITWpCMF93s+lGiG++D4JnbSnrb5A21AdSNg==
 
 "@humanwhocodes/config-array@^0.11.13":
   version "0.11.13"
@@ -1716,11 +1711,6 @@ source-map-js@^1.2.1, source-map-js@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.2.2.tgz#79fb88d97535a21cb27162cb05d211b67acea4ab"
   integrity sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==
-
-sprintf-js@^1.1.3:
-  version "1.1.3"
-  resolved "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.1.3.tgz"
-  integrity sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA==
 
 strip-ansi@^6.0.1:
   version "6.0.1"
