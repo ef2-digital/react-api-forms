@@ -1,5 +1,5 @@
 {
-  "name": "react-api-forms",
+  "name": "@ef2/react-api-forms",
   "version": "2.0.0",
   "type": "module",
   "description": "React plugin for Strapi API Forms",
@@ -49,5 +49,8 @@
     "@heroui/styles": "^3.2.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
