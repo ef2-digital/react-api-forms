@@ -24,13 +24,15 @@ const CheckboxOption = ({
   label,
   classNames,
   icon,
+  inputRef,
 }: {
   value?: string;
   label: string;
   classNames: FieldClassNames;
   icon?: React.ReactNode;
+  inputRef?: React.Ref<HTMLInputElement>;
 }) => (
-  <Checkbox value={value} className={classNames.option}>
+  <Checkbox value={value} className={classNames.option} inputRef={inputRef}>
     <Checkbox.Content>
       <Checkbox.Control className={classNames.control}>
         <Checkbox.Indicator>{icon}</Checkbox.Indicator>
@@ -67,11 +69,12 @@ export const DynamicControl = ({
   if (type === "email") {
     rules.pattern = {
       value: /\S+@\S+\.\S+/,
-      message: messages?.email!,
+      message: messages?.email ?? "",
     };
   }
 
   const controlProps = { name, control, rules };
+  const isRequired = Boolean(rules.required);
 
   const inputProps: InputProps = {
     isInvalid: Boolean(error),
@@ -103,13 +106,14 @@ export const DynamicControl = ({
       return (
         <Controller
           {...controlProps}
-          defaultValue={defaultValue ?? []}
-          render={({ field: { onChange, onBlur, value } }) => (
+          defaultValue={defaultValue}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
             <CheckboxGroup
               name={name}
               value={value ?? []}
               onChange={onChange}
               onBlur={onBlur}
+              isRequired={isRequired}
               isInvalid={Boolean(error)}
               validationBehavior="aria"
               className={fieldClassName}
@@ -122,6 +126,7 @@ export const DynamicControl = ({
                   label={o.label}
                   classNames={classNames}
                   icon={icons?.CheckboxSvg}
+                  inputRef={index === 0 ? ref : undefined}
                 />
               ))}
               {errorElement}
@@ -134,13 +139,15 @@ export const DynamicControl = ({
       return (
         <Controller
           {...controlProps}
-          defaultValue={Boolean(defaultValue)}
-          render={({ field: { onChange, onBlur, value } }) => (
+          defaultValue={defaultValue}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
             <Checkbox
               name={name}
               isSelected={Boolean(value)}
               onChange={onChange}
               onBlur={onBlur}
+              inputRef={ref}
+              isRequired={isRequired}
               isInvalid={Boolean(error)}
               validationBehavior="aria"
               className={cx(fieldClassName, classNames.option)}
@@ -161,12 +168,13 @@ export const DynamicControl = ({
       return (
         <Controller
           {...controlProps}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({ field: { onChange, onBlur, value, ref } }) => (
             <RadioGroup
               name={name}
               value={value ?? null}
               onChange={onChange}
               onBlur={onBlur}
+              isRequired={isRequired}
               isInvalid={Boolean(error)}
               validationBehavior="aria"
               className={fieldClassName}
@@ -174,7 +182,12 @@ export const DynamicControl = ({
               <Label className={classNames.label}>{label}</Label>
               {options.map((o, index) => (
                 // The label is the submitted value, as in earlier versions of this package.
-                <Radio key={`${name}-${index}`} value={o.label} className={classNames.option}>
+                <Radio
+                  key={`${name}-${index}`}
+                  value={o.label}
+                  className={classNames.option}
+                  inputRef={index === 0 ? ref : undefined}
+                >
                   <Radio.Content>
                     <Radio.Control className={classNames.control}>
                       <Radio.Indicator />
@@ -203,20 +216,20 @@ export const DynamicControl = ({
           })) ?? (
           <Controller
             {...controlProps}
-            render={({ field: { onChange, onBlur, value } }) => (
+            render={({ field: { onChange, onBlur, value, ref } }) => (
               <Select
                 name={name}
-                aria-label={label}
                 placeholder={placeholder}
                 value={value ?? null}
                 onChange={(key) => onChange(key)}
                 onBlur={onBlur}
+                isRequired={isRequired}
                 isInvalid={Boolean(error)}
                 validationBehavior="aria"
                 className={fieldClassName}
               >
                 <Label className={classNames.label}>{label}</Label>
-                <Select.Trigger className={classNames.input}>
+                <Select.Trigger ref={ref} className={classNames.input}>
                   <Select.Value />
                   <Select.Indicator />
                 </Select.Trigger>
