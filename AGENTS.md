@@ -7,7 +7,8 @@ know of.
 
 ## Run and test
 
-Yarn 1 (`packageManager` in `package.json`).
+Yarn 1 (`packageManager` in `package.json`); `yarn.lock` is the only lockfile. Node 22 from `.nvmrc`:
+Vite 8 needs Node 20.19 or newer. Do not add an `engines` field, it would bind every consumer too.
 
 ```bash
 yarn install
@@ -24,21 +25,18 @@ yarn lint
   in as `givenFields`, which skips that request.
 - `POST <endpoint>/api/api-forms/submission/post` sends `form`, `submission` (JSON) and any files as
   multipart form data. A hidden `honeypot` field is always rendered.
-- Radio and select options submit their label, not their value, as earlier versions did.
-- The built-in messages are de, en, fr and nl (`src/react-api-form/messages/`), loaded per locale.
+- Radio and select options submit their label, not their value, as in earlier versions.
+- An unticked checkbox has no value and is left out of the submission, as in 1.x.
+- The built-in messages are de, en, fr and nl (`src/react-api-form/messages/`), picked on the language
+  part of the locale, with English for any other language.
 
 ## Styling
 
-Since 2.0.0 the fields are HeroUI 3 components (`@heroui/react`) styled with Tailwind 4. One
-`classNames` object styles every field type by part: `field`, `label`, `input`, `description`,
-`error`, `option`, `control`, `optionLabel`, `popover`, `button` and the wrappers. The classes are
-added to HeroUI's own; a Tailwind `!` wins over them. The field widths set in the CMS
-(25 to 100 percent) are applied on the field wrapper.
-
-A consumer has to generate those classes: its CSS needs
-`@source '../node_modules/react-api-forms/dist';` and `@import '@heroui/styles';`. Without the
-`@source` line the layout classes silently do not exist, which is how NAPA ran for years without
-the CMS widths.
+Since 2.0.0 the fields are HeroUI 3 components styled with Tailwind 4, through one `classNames` set
+per part. `README.md` is what npm shows: it carries the install line with HeroUI's peers, the
+stylesheet lines, the `classNames` table and the 1.x migration. Keep it in step with `Types.ts` and
+the peers in `package.json`. Without the consumer's `@source` line the layout classes silently do
+not exist, which is how NAPA ran for years without the CMS field widths.
 
 ## Releases
 
