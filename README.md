@@ -1,4 +1,4 @@
-# react-api-forms
+# @ef2/react-api-forms
 
 A React form renderer for the Strapi API-forms plugin. It reads a form definition from the CMS,
 renders its fields and posts the submission back.
@@ -9,7 +9,7 @@ renders its fields and posts the submission back.
 be installed by the consumer as well, because Yarn 1 does not install peers by itself:
 
 ```bash
-yarn add react-api-forms@2 @heroui/react @heroui/styles \
+yarn add @ef2/react-api-forms @heroui/react @heroui/styles \
   react-aria-components react-aria @internationalized/date @react-aria/ssr @react-aria/utils
 ```
 
@@ -18,7 +18,7 @@ In the Tailwind 4 stylesheet of the consumer:
 ```css
 @import 'tailwindcss';
 @import '@heroui/styles';
-@source '../node_modules/react-api-forms/dist';
+@source '../node_modules/@ef2/react-api-forms/dist';
 ```
 
 The `@source` path is relative to the stylesheet. Without that line the layout classes of this
@@ -27,7 +27,7 @@ package (field widths, the submit button) are never generated, and nothing repor
 ## Usage
 
 ```tsx
-import { ReactApiForm } from 'react-api-forms';
+import { ReactApiForm } from '@ef2/react-api-forms';
 
 <ReactApiForm
     endpoint="https://cms.example.com"
@@ -70,6 +70,8 @@ Tailwind `!` wins over them.
 
 ## Upgrading from 1.x
 
+- The package moved to the `@ef2` scope: 1.x is `react-api-forms`, 2.x is `@ef2/react-api-forms`.
+  Replace the dependency and every import; the two can sit side by side during a migration.
 - `nextUi` (variant, radius, labelPlacement, color, size) and the enums behind it are gone; the
   look comes from HeroUI's styles plus `classNames`.
 - `uiClassNames` is gone. Its per-component keys map onto the shared keys above:

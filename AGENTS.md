@@ -1,6 +1,6 @@
-# react-api-forms
+# @ef2/react-api-forms
 
-A React form renderer, published to npm as `react-api-forms`. It reads a form definition from a
+A React form renderer, published to npm as `@ef2/react-api-forms`. It reads a form definition from a
 Strapi API-forms plugin and posts the submission back. The NAPA multidomain site
 (`ef2-digital/napa`, `apps/web`, `components/strapi/StrapiFormChooser.tsx`) is the consumer we
 know of.
@@ -40,14 +40,16 @@ not exist, which is how NAPA ran for years without the CMS field widths.
 
 ## Releases
 
-Nothing publishes from CI; somebody with publish rights runs `npm publish` from a clean `build`
-after the merge. The `version` on `main` has lagged behind npm (1.5.0 committed, 1.5.5
-published), so read `npm view react-api-forms version` before picking the next one.
+Since 2.0.0 the package is `@ef2/react-api-forms`, published by the `ef2-hosting` account, which
+holds the `@ef2` scope. 1.x stays on npm as the unscoped `react-api-forms`, which that account
+cannot publish to. Nothing publishes from CI: after the merge, `npm publish` from a clean `build`
+(`publishConfig.access` makes it public); the account asks for its security key. Check with
+`npm view @ef2/react-api-forms version peerDependencies`.
 
 ## Proving a change
 
 Build here, then try it in the consumer before publishing. Copy `dist/` into the consumer's
-`node_modules/react-api-forms/dist` and build the consumer. A `file:` tarball is less reliable:
+`node_modules/@ef2/react-api-forms/dist` and build the consumer. A `file:` tarball is less reliable:
 Yarn 1 in the consumer reuses a cached tarball with the same name and version, so a rebuilt
 package can install as the old one.
 
