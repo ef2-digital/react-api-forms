@@ -1,10 +1,5 @@
-import { PropsWithChildren, ReactNode } from "react";
-import {
-  Control,
-  FieldValues,
-  RegisterOptions,
-  SubmitHandler,
-} from "react-hook-form";
+import { BaseSyntheticEvent, PropsWithChildren, ReactNode } from "react";
+import { Control, RegisterOptions } from "react-hook-form";
 
 export type ControlType =
   | "text"
@@ -143,7 +138,8 @@ export declare interface Renders {
     handleSubmit,
     isSubmitting,
   }: {
-    handleSubmit: SubmitHandler<FieldValues>;
+    /** The form's submit handler, already bound to the fields: call it from a button or a form event. */
+    handleSubmit: (e?: BaseSyntheticEvent) => Promise<void>;
     isSubmitting: boolean;
   }) => ReactNode;
   renderSelect?: (args: RenderFieldArguments & { options: SelectOption[] }) => ReactNode;

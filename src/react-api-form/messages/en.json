@@ -2,5 +2,6 @@
   "required": "Field is required",
   "file": "Select file",
   "pattern": "Email address must have a correct format.",
-  "submit": "Submit"
+  "submit": "Submit",
+  "error": "Something went wrong while sending the form. Please try again later."
 }

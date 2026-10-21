@@ -2,5 +2,6 @@
   "required": "Feld ist erforderlich",
   "file": "Datei auswählen",
   "pattern": "E-Mail-Adresse muss ein korrektes Format haben.",
-  "submit": "Absenden"
+  "submit": "Absenden",
+  "error": "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
 }

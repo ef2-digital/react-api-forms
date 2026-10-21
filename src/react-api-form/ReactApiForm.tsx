@@ -67,7 +67,8 @@ const ReactApiForm = ({
       setFields(JSON.parse(response));
     };
     const fetchMessages = async () => {
-      const load = messageLoaders[locale ?? "nl"] ?? messageLoaders.nl;
+      const language = (locale ?? "nl").toLowerCase().split("-")[0];
+      const load = messageLoaders[language] ?? messageLoaders.en;
       const response = await load();
 
       setMessages(response.default);
@@ -94,14 +95,14 @@ const ReactApiForm = ({
   const formSubmit: SubmitHandler<FieldValues> = async (data) => {
     const response = await postSubmission(endpoint, formId, data);
 
-    if (response.status !== 200) {
-      setError(response.statusText);
+    if (!response.ok) {
+      return setError(messages?.error || response.statusText || "Error");
     }
 
-    const result = await response.json();
+    const result = await response.json().catch(() => null);
 
-    if (!result) {
-      setError(result.form.errorMessage);
+    if (!result?.form) {
+      return setError(messages?.error || "Error");
     }
 
     return setSuccess(result.form.successMessage);
@@ -164,7 +165,7 @@ const ReactApiForm = ({
             <DynamicControl
               defaultValue=""
               name="honeypot"
-              label="Don’t fill this out if you're human"
+              label="Don't fill this out if you're human"
               type="text"
               control={control}
               messages={messages}
@@ -174,8 +175,9 @@ const ReactApiForm = ({
 
           {(renders?.renderSubmitButton &&
             renders.renderSubmitButton({
-              // @ts-ignore The render receives the bound submit handler, not the raw one.
-              handleSubmit: handleSubmit(formSubmit),
+              handleSubmit: async (e?: React.BaseSyntheticEvent) => {
+                await handleSubmit(formSubmit)(e);
+              },
               isSubmitting: isSubmitting,
             })) ?? (
             <Button type="submit" isPending={isSubmitting} className={cx("group", classNames?.button)}>
